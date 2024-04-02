@@ -23,7 +23,7 @@ Route::redirect('/','/tasks');
 //get all tasks
 Route::get('/tasks', function () {
     //$tasks=\App\Models\Task::all();
-    $tasks=Task::latest()->get();  //to get the latest added tasks
+    $tasks=Task::latest()->paginate(10);  //to get the latest added tasks and divide on multiple pages
     return view('index',[
         'tasks'=> $tasks
     ]);
@@ -82,6 +82,11 @@ Route::delete('/tasks/{task}',function(Task $task){
 
     return redirect()->route('tasks.index')->with('success','Task named => '.$tname.' deleted successfully');
 })->name('tasks.destroy');
+
+Route::put('/tasks/{task}/toggle-complete',function(Task $task){
+    $task->ToggleComplete();
+    return redirect()->back()->with('success','Task updated successfully');
+})->name('tasks.toggle-complete');
 
 //handling url's that don't exit
 Route::fallback(function(){
